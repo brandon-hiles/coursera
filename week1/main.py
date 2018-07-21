@@ -70,8 +70,7 @@ for i in range(n_iter):
     loss[i] = compute_loss(X_expanded, y, w)
     if i % 10 == 0:
         visualize(X_expanded[ind, :], y[ind], w, loss)
-
-    # TODO:<your code here>
+        
     dW = compute_grad(X_expanded[ind, :], y[ind], w)
     w = w - eta * dW 
 
@@ -97,7 +96,6 @@ for i in range(n_iter):
     if i % 10 == 0:
         visualize(X_expanded[ind, :], y[ind], w, loss)
 
-    # TODO:<your code here>
     dW = compute_grad(X_expanded[ind, :], y[ind], w)
     nu = alpha*nu+eta*dW
     w = w - nu
@@ -125,8 +123,8 @@ for i in range(n_iter):
     if i % 10 == 0:
         visualize(X_expanded[ind, :], y[ind], w, loss)
 
-    # TODO:<your code here>
-    dW = compute_grad(X_expanded[ind, :], y[ind], w)
+
+        dW = compute_grad(X_expanded[ind, :], y[ind], w)
     g2 = dW**2
     G = alpha*G+(1-alpha)*g2
 
