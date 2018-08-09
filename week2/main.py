@@ -6,7 +6,6 @@ from tensorflow.python.framework import ops
 from preprocessed_mnist import load_dataset
 
 X_train, y_train, X_val, y_val, X_test, y_test = load_dataset()
-print(X_train.shape, y_train.shape)
 plt.imshow(X_train[0], cmap="Greys");
 
 # Reshape the training and test examples.
@@ -17,18 +16,21 @@ X_test = X_test.reshape(X_test.shape[0], image_size)
 # Define placeholders
 input_X = tf.placeholder(tf.float32, shape=(None, image_size))
 input_y = tf.placeholder(tf.float32, shape=(None, 10)) # 10 different digits
-keep_prob = tf.placeholder(tf.float32)
+keep_prob = tf.placeholder(tf.float32) # Used for dropout
+
 
 # Define Variables
-W1 = tf.get_variable("W1",  [784, 128], initializer=tf.contrib.layers.xavier_initializer())
-b1 = tf.get_variable("b1",  [128], initializer=tf.zeros_initializer())
-W2 = tf.get_variable("W2",  [128, 128], initializer=tf.contrib.layers.xavier_initializer())
-b2 = tf.get_variable("b2",  [128], initializer=tf.zeros_initializer())
-W3 = tf.get_variable("W3", [128, 10], initializer=tf.contrib.layers.xavier_initializer())
-b3 = tf.get_variable("b3",  [10], initializer=tf.zeros_initializer())
+# Use xavier_initializer for an initializer for a weight matrix.
+# Use zeros_initializer for our bias terms
 
-# Run Logistic Regression
+W1 = tf.get_variable("W1",  shape=[784, 128], initializer=tf.contrib.layers.xavier_initializer())
+b1 = tf.get_variable("b1",  shape=[128], initializer=tf.zeros_initializer())
+W2 = tf.get_variable("W2",  shape=[128, 128], initializer=tf.contrib.layers.xavier_initializer())
+b2 = tf.get_variable("b2",  shape=[128], initializer=tf.zeros_initializer())
+W3 = tf.get_variable("W3",  shape=[128, 10], initializer=tf.contrib.layers.xavier_initializer())
+b3 = tf.get_variable("b3",  shape=[10], initializer=tf.zeros_initializer())
 
+# Run Logistic Regression with clean data
 Z1 = tf.matmul(input_X, W1)+ b1
 A1 = tf.nn.relu(Z1)
 A1 = tf.nn.dropout(A1, keep_prob)
@@ -39,7 +41,7 @@ Z3 = tf.matmul(A2, W3)+b3
 A3 = tf.nn.sigmoid(Z3)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=input_y, logits=A3))
-starter_learning_rate = 0.0007 # Guess
+starter_learning_rate = 0.0007 # Guess at learning rate
 global_step = tf.Variable(0, trainable=False)
 learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step, 100, 0.85, staircase=True)
 optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
@@ -50,7 +52,7 @@ y_test = np.eye(10)[y_test]
 init = tf.global_variables_initializer()
 batch_size = 500
 with tf.Session() as sess:
-    sess.run(init)
+    sess.run(init) # Initate the computation session
     train_costs = []
     test_costs = []
     for epoch in range(100):
